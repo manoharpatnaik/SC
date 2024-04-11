@@ -1,46 +1,36 @@
 import java.math.BigInteger;
-import java.security.SecureRandom;
 
 public class RSA {
 
-    private BigInteger modulus;
-    private BigInteger publicKey;
-    private BigInteger privateKey;
+    public static void main(String args[]) {
 
-    // Constructor to generate RSA key pair with specified bit length
-    public RSA(int bitLength) {
-        SecureRandom random = new SecureRandom();
-        BigInteger p = BigInteger.probablePrime(bitLength / 2, random);
-        BigInteger q = BigInteger.probablePrime(bitLength / 2, random);
-        modulus = p.multiply(q);
+        int p = 17; // Prime p
+        int q = 19; // Prime q
 
-        BigInteger phi = p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
+        // The number to be encrypted and decrypted
+        int msg = 8;
 
-        publicKey = new BigInteger("65537"); // Common value in practice (2^16 + 1)
-        privateKey = publicKey.modInverse(phi);
+        int n = p * q;
+        int z = (p - 1) * (q - 1);
+        System.out.println("Prime p = " + p);
+        System.out.println("Prime q = " + q);
+        System.out.println("Phi = " + z);
+
+        int e = 65537; // Public key exponent
+        int d = 161;    // Private key exponent
+
+        System.out.println("Public = " + e);
+        System.out.println("Private = " + d);
+        System.out.println("Modulus = " + n);
+
+        // Encrypting the message
+        BigInteger encrypted = BigInteger.valueOf(msg).modPow(BigInteger.valueOf(e), BigInteger.valueOf(n));
+        System.out.println("Encrypted message is : " + encrypted);
+
+        // Decrypting the message
+        BigInteger decrypted = encrypted.modPow(BigInteger.valueOf(d), BigInteger.valueOf(n));
+        System.out.println("Decrypted message is : " + decrypted);
+
     }
 
-    // Encrypt plaintext using RSA public key
-    public BigInteger encrypt(BigInteger plaintext) {
-        return plaintext.modPow(publicKey, modulus);
-    }
-
-    // Decrypt ciphertext using RSA private key
-    public BigInteger decrypt(BigInteger ciphertext) {
-        return ciphertext.modPow(privateKey, modulus);
-    }
-
-    public static void main(String[] args) {
-        int bitLength = 1024; // Specify desired bit length for RSA key
-        RSA rsa = new RSA(bitLength);
-
-        BigInteger plaintext = new BigInteger("1234567890");
-        System.out.println("Plaintext: " + plaintext);
-
-        BigInteger ciphertext = rsa.encrypt(plaintext);
-        System.out.println("Ciphertext: " + ciphertext);
-
-        BigInteger decryptedText = rsa.decrypt(ciphertext);
-        System.out.println("Decrypted Text: " + decryptedText);
-    }
 }
