@@ -1,0 +1,47 @@
+import java.math.BigInteger;
+import java.security.SecureRandom;
+
+public class DiffieHellman {
+
+    private static final BigInteger P = new BigInteger("6277101735386680763835789423207666416083908700390324961279");
+    private static final BigInteger G = new BigInteger("2");
+    private static final int BIT_LENGTH = 1024;
+
+    public static void main(String[] args) {
+        // Generate private keys for Alice and Bob
+        BigInteger aPrivate = generatePrivateKey();
+        BigInteger bPrivate = generatePrivateKey();
+
+        // Calculate public keys for Alice and Bob
+        BigInteger aPublic = calculatePublicKey(aPrivate);
+        BigInteger bPublic = calculatePublicKey(bPrivate);
+
+        // Simulate exchange of public keys
+        BigInteger sharedKeyA = calculateSharedKey(aPrivate, bPublic);
+        BigInteger sharedKeyB = calculateSharedKey(bPrivate, aPublic);
+
+        // Check if the shared keys are the same
+        if (sharedKeyA.equals(sharedKeyB)) {
+            System.out.println("Shared secret key: " + sharedKeyA);
+        } else {
+            System.out.println("Key exchange failed.");
+        }
+    }
+
+    // Generate a random private key
+    private static BigInteger generatePrivateKey() {
+        SecureRandom random = new SecureRandom();
+        return new BigInteger(BIT_LENGTH, random);
+    }
+
+    // Calculate public key from private key
+    private static BigInteger calculatePublicKey(BigInteger privateKey) {
+        return G.modPow(privateKey,P);
+    }
+
+    // Calculate shared key from private key and public key
+    private static BigInteger calculateSharedKey(BigInteger privateKey, BigInteger publicKey) {
+        return publicKey.modPow(privateKey,P);
+    }
+}
+
